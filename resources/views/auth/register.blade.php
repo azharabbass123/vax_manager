@@ -3,6 +3,7 @@
       id="hero" style="overflow-y: scroll;">
       <div class="d-flex align-items-center justify-content-center">
         <form method="POST" class="p-4 mt-4 w-50 bg-light rounded">
+            @csrf
           <h2 class="text-center text-dark">Enter your data</h2>
           <div class="mb-3">
             <label for="username" class="form-label">Full Name</label>

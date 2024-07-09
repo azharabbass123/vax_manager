@@ -7,7 +7,7 @@
 
     <meta content="" name="description">
     <meta content="" name="keywords">
-  
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="robots" content="noindex, nofollow">
   
     <!-- Jquery link  -->
@@ -61,6 +61,9 @@
     <script src="{{ asset('assets/js/softDelete.js') }}"></script>
 
     <!-- ShowCities  -->
+    <script>
+    const fetchCitiesUrl = "{{ route('fetch-cities') }}";
+    </script>
     <script src="{{ asset('assets/js/ShowCities.js') }}"></script>
   
     <!-- getAvaibleHealthWorkers -->

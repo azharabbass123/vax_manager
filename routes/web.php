@@ -11,6 +11,8 @@ Route::get('/', function () {
 
 Route::get('/register', [RegisterUserController::class, 'create']);
 Route::post('/register', [RegisterUserController::class, 'store']);
+Route::post('/fetch-cities', [RegisterUserController::class, 'fetchCities'])->name('fetch-cities');
+
 
 Route::get('/session', [SessionController::class, 'create']);
 Route::post('/session', [SessionController::class, 'store']);
