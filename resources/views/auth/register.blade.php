@@ -6,9 +6,9 @@
             @csrf
           <h2 class="text-center text-dark">Enter your data</h2>
           <div class="mb-3">
-            <label for="username" class="form-label">Full Name</label>
-            <input type="text" class="form-control" id="username" name="name" />
-            @error('username')
+            <label for="name" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="name" name="name" />
+            @error('name')
                 <div class="alert alert-danger">{{ $message }}</div>
             @enderror
           </div>
@@ -20,8 +20,8 @@
             @enderror
           </div>
           <div class="mb-3">
-            <label for="role" class="form-label">Date of Birth</label>
-            <input type="date" class="form-control" id="dob" name="date" />
+            <label for="DOB" class="form-label">Date of Birth</label>
+            <input type="date" class="form-control" id="DOB" name="DOB" />
             @error('DOB')
                 <div class="alert alert-danger">{{ $message }}</div>
             @enderror

@@ -26,9 +26,25 @@ class SessionController extends Controller
                  'authFail' => 'sorry those credentials did not match'
              ]);
         }
- 
-        //request()->session()->regenerate();
- 
-        return "congrats you are done!";
+
+        $user = Auth::user();
+
+        session(['userRole' => $user->role_id]);
+
+        $request->session()->regenerate();
+
+        $result = match($user->role_id) {
+            1 => redirect('/admin'),
+            2 => redirect('/health_worker'),
+            default => redirect('/patient'),
+        };
+        
+        return $result;
      }
+
+     public function destroy(){
+        Auth::logout();
+
+        return redirect('/');
+    }
 }

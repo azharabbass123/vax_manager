@@ -32,6 +32,9 @@
     <link href="{{ asset('assets/vendor/glightbox/css/glightbox.min.css') }}" rel="stylesheet">
     <link href="{{ asset('assets/vendor/swiper/swiper-bundle.min.css') }}" rel="stylesheet">
   
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet"> -->
+    <link  href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.min.css" rel="stylesheet">
+
     <!-- Main CSS File -->
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet">
 </head>
@@ -70,6 +73,10 @@
     <script src="{{ asset('assets/js/showAvaialableHW.js') }}"></script>
     <!-- Main JS File -->
     <script src="{{ asset('assets/js/main.js') }}"></script>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
   
     <script defer="" src="https://static.cloudflareinsights.com/beacon.min.js/vc733d5f01de84e3792a4035cd15c58a81717452547180" integrity="sha512-fqEn6JCqkzgyQXZxQOxB9z6GyWybXdsYNuqu0tW/ATUi0uJMKhFfYpk0taNyC90JiX4HZUqEp6nnOyL7/ZvjCA==" data-cf-beacon="{&quot;rayId&quot;:&quot;8901b5d80fe96be2&quot;,&quot;version&quot;:&quot;2024.4.1&quot;,&quot;token&quot;:&quot;68c5ca450bae485a842ff76066d69420&quot;}" crossorigin="anonymous"></script>
   

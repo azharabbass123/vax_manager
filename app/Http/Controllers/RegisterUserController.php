@@ -19,17 +19,29 @@ class RegisterUserController extends Controller
 
     public function store(Request $request){
         $attributes = $request->validate([
-            'username' => ['required'],
-            'last_name' => ['required'],
-            'email' => ['required', 'email'],
-            'password' => ['required', Password::min(6), 'confirmed'],
+            'name' => ['required'],
+            'email' => ['required', 'email', 'unique:users,email'],
+            'DOB' => ['required'],
+            'role_id' => ['required'],
+            'city_id' => ['required'],
+            'password' => ['required', Password::min(6)],
         ]);
         
         $user = User::create($attributes);
 
         Auth::login($user);
 
-        return redirect('/jobs');
+        session(['userRole' => $user->role_id]);
+
+        $request->session()->regenerate();
+
+        $result = match($user->role_id) {
+            1 => redirect('/admin'),
+            2 => redirect('/health_worker'),
+            default => redirect('/patient'),
+        };
+
+        return $result;
     }
 
     public function fetchCities(Request $request)

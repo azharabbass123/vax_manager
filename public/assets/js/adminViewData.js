@@ -1,89 +1,121 @@
 
 // This file is required in admin view to show data 
 $(document).ready(function() {
-    $('.table').DataTable();
     $('#patient_card').hide();
     $('#appointment_card').hide();
     $('#vaccination_card').hide();
-    //getHealthWorkers();
-    health_worker_card = function (){
-      $('#patient').removeClass('myActive-button');
-      $('#appointment').removeClass('myActive-button');
-      $('#vaccination').removeClass('myActive-button');
-      $('#hw').addClass('myActive-button');
-      $('#health_worker_card').show();
-      $('#patient_card').hide();
-      $('#appointment_card').hide();
-      $('#vaccination_card').hide();
-    };
-    patient_card = function () {
-      $('#patient').addClass('myActive-button');
-      $('#appointment').removeClass('myActive-button');
-      $('#vaccination').removeClass('myActive-button');
-      $('#hw').removeClass('myActive-button');
-      $('#patient_card').show();
-      $('#health_worker_card').hide();
-      $('#appointment_card').hide();
-      $('#vaccination_card').hide();
-    }
-    appointment_card = function () {
-      $('#patient').removeClass('myActive-button');
-      $('#appointment').addClass('myActive-button');
-      $('#vaccination').removeClass('myActive-button');
-      $('#hw').removeClass('myActive-button');
-      $('#patient_card').hide();
-      $('#health_worker_card').hide();
-      $('#appointment_card').show();
-      $('#vaccination_card').hide();
-    }
-    vaccination_card = function () {
-      $('#patient').removeClass('myActive-button');
-      $('#appointment').removeClass('myActive-button');
-      $('#vaccination').addClass('myActive-button');
-      $('#hw').removeClass('myActive-button');
-      $('#patient_card').hide();
-      $('#health_worker_card').hide();
-      $('#appointment_card').hide();
-      $('#vaccination_card').show();
-    }
+    // Initially load health workers data
+    loadHealthWorkers();
+    // Event handlers for menu buttons
+    $('#hw').click(function() {
+        $('#patient').removeClass('myActive-button');
+        $('#appointment').removeClass('myActive-button');
+        $('#vaccination').removeClass('myActive-button');
+        $('#hw').addClass('myActive-button');
+        $('#health_worker_card').show();
+        $('#patient_card').hide();
+        $('#appointment_card').hide();
+        $('#vaccination_card').hide();
+        loadHealthWorkers();
+    });
+
+    $('#patient').click(function() {
+        $('#patient').addClass('myActive-button');
+        $('#appointment').removeClass('myActive-button');
+        $('#vaccination').removeClass('myActive-button');
+        $('#hw').removeClass('myActive-button');
+        $('#patient_card').show();
+        $('#health_worker_card').hide();
+        $('#appointment_card').hide();
+        $('#vaccination_card').hide();
+        loadPatients();
+    });
+
+    $('#appointment').click(function() {
+        $('#patient').removeClass('myActive-button');
+        $('#appointment').addClass('myActive-button');
+        $('#vaccination').removeClass('myActive-button');
+        $('#hw').removeClass('myActive-button');
+        $('#patient_card').hide();
+        $('#health_worker_card').hide();
+        $('#appointment_card').show();
+        $('#vaccination_card').hide();
+        loadAppointments();
+    });
+
+    $('#vaccination').click(function() {
+        $('#patient').removeClass('myActive-button');
+        $('#appointment').removeClass('myActive-button');
+        $('#vaccination').addClass('myActive-button');
+        $('#hw').removeClass('myActive-button');
+        $('#patient_card').hide();
+        $('#health_worker_card').hide();
+        $('#appointment_card').hide();
+        $('#vaccination_card').show();
+        loadVaccinations();
+    });
 
    // Function to load health workers data via AJAX
    function loadHealthWorkers() {
-    $.ajax({
-        url: 'controllers/admin/loadData.php', // Replace with your PHP endpoint
-        type: 'GET',
-        dataType: 'json',
-        data:{action: 'hw'},
-        success: function(data) {
-            updateTableHw('#health_worker_data', data);
-        },
-        error: function(xhr, status, error) {
-            console.error('Error loading health workers:', error);
-        }
+    if ($.fn.DataTable.isDataTable('#hwTable')) {
+        $('#hwTable').DataTable().destroy();
+    }
+    $('#hwTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "/fetch-hw",
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'city_name', name: 'city_name' },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
+        ],
+        columnDefs: [
+            {
+                targets: 0,
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            }
+        ]
     });
 }
 
 // Function to load patients data via AJAX
 function loadPatients() {
-    $.ajax({
-        url: 'controllers/admin/loadData.php', // Replace with your PHP endpoint
-        type: 'GET',
-        dataType: 'json',
-        data: {action: 'patient'},
-        success: function(data) {
-            // Update patients table
-            updateTablePatient('#patient_data', data);
-        },
-        error: function(xhr, status, error) {
-            console.error('Error loading patients:', error);
-        }
+    if ($.fn.DataTable.isDataTable('#hwTable')) {
+        $('#hwTable').DataTable().destroy();
+    }
+    $('#patientTable').DataTable({
+        processing: true,
+        serverSide: true,
+        ajax: "fetch-patient",
+        columns: [
+            { data: 'id', name: 'id' },
+            { data: 'name', name: 'name' },
+            { data: 'email', name: 'email' },
+            { data: 'city_name', name: 'city_name' },
+            { data: 'action', name: 'action', orderable: false, searchable: false },
+        ],
+        columnDefs: [
+            {
+                targets: 0,
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1;
+                }
+            }
+        ]
     });
 }
 
 // Function to load appointments data via AJAX
 function loadAppointments() {
     $.ajax({
-        url: 'controllers/admin/loadData.php', 
+        url: fetchDataUrl,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         type: 'GET',
         dataType: 'json',
         data: {action: 'apt'},
@@ -99,7 +131,10 @@ function loadAppointments() {
 // Function to load vaccinations data via AJAX
 function loadVaccinations() {
     $.ajax({
-        url: 'controllers/admin/loadData.php', 
+        url: fetchDataUrl,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
         type: 'GET',
         dataType: 'json',
         data: {action: 'vax'},
@@ -112,40 +147,6 @@ function loadVaccinations() {
     });
 }
 
-// Function to update a specific table with new data
-function updateTableHw(tableId, data) {
-    var tableBody = $(tableId);
-    tableBody.empty(); 
-    var sn = 1;
-    $.each(data, function(index, item) {
-        var row = '<tr id="' + item.id + '">' +
-            '<td>' + sn + '</td>' +
-            '<td>' + item.name + '</td>' +
-            '<td>' + item.email + '</td>' +
-            '<td>' + item.city_name + '</td>' +
-            '<td><a href="#" onclick="deleteHw(' + item.id + ')" class="btn btn-sm btn-danger">Delete</a></td>' +
-            '</tr>';
-        tableBody.append(row);
-        sn++;
-    });
-}
-
-function updateTablePatient(tableId, data) {
-  var tableBody = $(tableId);
-  tableBody.empty();
-  var sn = 1;
-  $.each(data, function(index, item) {
-      var row = '<tr id="' + item.id + '">' +
-          '<td>' + sn + '</td>' +
-          '<td>' + item.name + '</td>' +
-          '<td>' + item.email + '</td>' +
-          '<td>' + item.city_name + '</td>' +
-          '<td><a href="#" onclick="deletePatient(' + item.id + ')" class="btn btn-sm btn-danger">Delete</a></td>' +
-          '</tr>';
-      tableBody.append(row);
-      sn++;
-  });
-}
 
 
 function updateTableAppointments(tableId, data) {
@@ -159,8 +160,6 @@ function updateTableAppointments(tableId, data) {
           '<td>' + item.health_worker_name + '</td>' +
           '<td>' + item.appointment_date + '</td>' +
           '<td>' + item.appointment_status + '</td>' +
-          //'<td><a href="editAppointment?edit=' + item.appointment_id + '"class="btn btn-sm btn-primary">Edit</a></td>' +
-          //'<td><a href="#" onclick="deleteAptRec(' + item.appointment_id + ')" class="btn btn-sm btn-danger">Delete</a></td>' +
           '</tr>';
       tableBody.append(row);
       sn++;
@@ -177,32 +176,49 @@ function updateTableVaccinations(tableId, data) {
           '<td>' + item.patient_name + '</td>' +
           '<td>' + item.vaccination_date + '</td>' +
           '<td>' + item.vaccination_status + '</td>' +
-        //   '<td><a href="editVaccination?edit=' + item.vaccination_id + '"class="btn btn-sm btn-primary">Edit</a></td>' +
-        //   '<td><a href="#" onclick="deleteVaxRec(' + item.vaccination_id + ')" class="btn btn-sm btn-danger">Delete</a></td>' +
-           '</tr>';
+         '</tr>';
       tableBody.append(row);
       sn++;
   });
 }
 
-// Event handlers for menu buttons
-$('#hw').click(function() {
-    loadHealthWorkers();
-});
 
-$('#patient').click(function() {
-    loadPatients();
-});
+// Function to delete patient via AJAX
+window.deletePatient = function(id) {
+    if (confirm('Are you sure you want to delete this patient?')) {
+        $.ajax({
+            url: "/delte-patient/" + id,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                alert(response.success); // Show success message
+                table.ajax.reload(); // Reload DataTable
+            },
+            error: function(xhr, status, error) {
+                console.error('Error deleting patient:', error);
+            }
+        });
+    }
+};
 
-$('#appointment').click(function() {
-    loadAppointments();
-});
-
-$('#vaccination').click(function() {
-    loadVaccinations();
-});
-
-// Initially load health workers data
-loadHealthWorkers();
-
+window.deleteHw = function(id) {
+    if (confirm('Are you sure you want to delete this health worker?')) {
+        $.ajax({
+            url: "/delete-hw/" + id,
+            type: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                alert(response.success); // Show success message
+                table.ajax.reload(); // Reload DataTable
+            },
+            error: function(xhr, status, error) {
+                console.error('Error deleting health worker:', error);
+            }
+        });
+    }
+};
 })

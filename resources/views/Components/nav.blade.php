@@ -19,19 +19,21 @@
             </li>
           </ul>
           
-          <?php if ($_SESSION['user'] ?? false) : ?>
+            @auth
                 <div class="ml-3 mt-2 d-flex">
-                  <?php if($_SESSION['user']['userRole'] == 2){ ?>
-                  <img src="assets/img/doctors/doctors-3.jpg" alt="docter" class="my-nav-img">
-                  <?php } elseif ($_SESSION['user']['userRole'] == 1 || $_SESSION['user']['userRole'] == 3) { ?>
-                    <img src="assets/img/testimonials/testimonials-5.jpg" alt="docter" class="my-nav-img">
-                    <?php } ?>
+                @if (auth()->check() && session('userRole') == 2)
+                  <img src="{{ asset('assets/img/doctors/doctors-3.jpg') }}" alt="doctor" class="my-nav-img">
+                @elseif (auth()->check() && (session('userRole') == 1 || session('userRole') == 3))
+                  <img src="{{ asset('assets/img/testimonials/testimonials-5.jpg') }}" alt="doctor" class="my-nav-img">
+                @endif
                 <form action="session" method="post">
-                    <input type="hidden" name="_method" value="DELETE">
+                    @csrf
+                    @method('DELETE')
                     <button type="submit" class="bg-transparent text-white rounded">Log Out</button>
                   </form>
             </div>
-              <?php else: ?>
+            @endauth
+              @guest
                 <ul class="navbar-nav ml-5 mb-1 mb-lg-0">
           <li class="nav-item">
           <a class="bg-transparent mx-3 rounded nav-link <?php echo ($_SERVER['REQUEST_URI'] === '/pro_vax_track/session') ? 'active': ''; ?>" href="session">Sign In</a>
@@ -40,7 +42,7 @@
           <a class="bg-transparent rounded nav-link <?php echo ($_SERVER['REQUEST_URI'] === '/pro_vax_track/register') ? 'active': ''; ?>" href="register">Register</a>
           </li>
           </ul>
-                  <?php endif; ?>
+           @endguest
           
           
         </div>
