@@ -3,6 +3,8 @@
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\RegisterUserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HealthWorkerController;
+use App\Http\Controllers\PatientController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -27,3 +29,7 @@ Route::get('/fetch-vax', [AdminController::class, 'fetchVaccinations'])->name('f
 
 Route::delete('/delete-hw/{id}', [AdminController::class, 'deleteHW'])->name('health-workers.destroy');
 Route::delete('/delete-patient/{id}', [AdminController::class, 'deletePatient'])->name('patients.destroy');
+
+Route::get('/health_worker', [HealthWorkerController::class, 'create']);
+
+Route::get('/patient', [PatientController::class, 'create']);

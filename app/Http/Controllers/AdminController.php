@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\City;
 use Illuminate\Http\Request;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Facades\DB;
 class AdminController extends Controller
 {
     public function create()
@@ -17,20 +18,28 @@ class AdminController extends Controller
     }
 
     public function fetchHealthWorkers()
-    {
-        $data = HealthWorker::with(['user.city:id,name', 'user:id,email'])
-                        ->select(['id'])
-                        ->get(); // Fetch all health workers with related user and city data
+{
+    $data = DB::table('health_workers')
+                ->join('users', 'health_workers.user_id', '=', 'users.id')
+                ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
+                ->select([
+                    'health_workers.id',
+                    'users.name as user_name',
+                    'users.email as user_email',
+                    'cities.name as city_name'
+                ])
+                ->whereNull('health_workers.deleted_at')
+                ->get();
 
         return DataTables::of($data)
             ->addColumn('name', function($row) {
-                return $row->user->name ?? 'N/A'; // Access name through the user relationship
+                return $row->user_name ?? 'N/A';
             })
             ->addColumn('email', function($row) {
-                return $row->user->email ?? 'N/A'; // Access email through the user relationship
+                return $row->user_email ?? 'N/A';
             })
             ->addColumn('city_name', function($row) {
-                return $row->user->city->name ?? 'N/A'; // Access city name through the user->city relationship
+                return $row->city_name ?? 'N/A';
             })
             ->addColumn('action', function($row) {
                 $btn = '<button type="button" onclick="deleteHw('.$row->id.')" class="btn btn-sm btn-danger">Delete</button>';
@@ -38,58 +47,137 @@ class AdminController extends Controller
             })
             ->rawColumns(['action'])
             ->make(true);
-    }
+}
     
     public function fetchPatients()
     {
-        $data = Patient::with(['user.city:id,name', 'user:id,email'])
-                        ->select(['patients.id'])
+        $data = DB::table('patients')
+                        ->join('users', 'patients.user_id', '=', 'users.id')
+                        ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
+                        ->select([
+                            'patients.id',
+                            'users.name as user_name',
+                            'users.email as user_email',
+                            'cities.name as city_name'])
+                        ->whereNull('patients.deleted_at')    
                         ->get(); // Fetch all health workers with related user and city data
 
-        return DataTables::of($data)
-            ->addColumn('name', function($row) {
-                return $row->user->name ?? 'N/A'; // Access name through the user relationship
-            })
-            ->addColumn('email', function($row) {
-                return $row->user->email ?? 'N/A'; // Access email through the user relationship
-            })
-            ->addColumn('city_name', function($row) {
-                return $row->user->city->name ?? 'N/A'; // Access city name through the user->city relationship
-            })
-            ->addColumn('action', function($row) {
-                $btn = '<button type="button" onclick="deletePatient('.$row->id.')" class="btn btn-sm btn-danger">Delete</button>';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+                        return DataTables::of($data)
+                        ->addColumn('name', function($row) {
+                            return $row->user_name ?? 'N/A';
+                        })
+                        ->addColumn('email', function($row) {
+                            return $row->user_email ?? 'N/A';
+                        })
+                        ->addColumn('city_name', function($row) {
+                            return $row->city_name ?? 'N/A';
+                        })
+                        ->addColumn('action', function($row) {
+                            $btn = '<button type="button" onclick="deletePatient('.$row->id.')" class="btn btn-sm btn-danger">Delete</button>';
+                            return $btn;
+                        })
+                        ->rawColumns(['action'])
+                        ->make(true);
     }
     
     public function fetchVaccinations()
     {
-        $data = Vaccination::select(['vaccination_id', 'patient_name', 'vaccination_date', 'vaccination_status']);
+        $data = DB::table('vaccinations')
+                        ->join('patients', 'vaccinations.patient_id', '=', 'patients.id')
+                        ->join('users', 'patients.user_id', '=', 'users.id')
+                        ->select([
+                            'vaccinations.id',
+                            'users.name as patient_name',
+                            'vaccinations.vax_Date as vax_date', 
+                            'vaccinations.vax_Status as vax_status'])
+                            ->get();
+                            
 
             return DataTables::of($data)
+                ->addColumn('patient_name', function($row){
+                    return $row->patient_name ?? 'NA';
+                })
+                ->addColumn('vax_date', function($row){
+                    return $row->vax_date ?? 'NA';
+                })
+                ->addColumn('vax_status', function($row){
+                    return $row->vax_status ?? 'NA';
+                })
                 ->make(true);
     }
     
     public function fetchAppointments()
+    
     {
-        $data = Appointment::select(['id', 'patient_name', 'health_worker_name', 'appointment_date', 'appointment_status']);
+        $data = DB::table('appointments')
+                ->join('patients', 'appointments.patient_id', '=', 'patients.id')
+                ->join('users as patient_users', 'patients.user_id', '=', 'patient_users.id')
+                ->join('health_workers', 'appointments.hw_id', '=', 'health_workers.id')
+                ->join('users as hw_users', 'health_workers.user_id', '=', 'hw_users.id')
+                ->select([
+                    'appointments.id',
+                    'patient_users.name as patient_name',
+                    'hw_users.name as health_worker_name',
+                    'appointments.apt_Date as appointment_date',
+                    'appointments.apt_Status as appointment_status'
+                ])
+                ->get();
 
-            return DataTables::of($data)
-                ->make(true);
+        return DataTables::of($data)
+            ->addColumn('patient_name', function($row) {
+                return $row->patient_name ?? 'NA';
+            })
+            ->addColumn('health_worker_name', function($row) {
+                return $row->health_worker_name ?? 'NA';
+            })
+            ->addColumn('appointment_date', function($row) {
+                return $row->appointment_date ?? 'NA';
+            })
+            ->addColumn('appointment_status', function($row) {
+                return $row->appointment_status ?? 'NA';
+            })
+            ->make(true);
     }
+
+    
 
     public function deleteHW($id)
     {
-        HealthWorker::find($id)->delete();
+        $healthWorker = HealthWorker::find($id);
 
-        return response()->json(['success'=>'Health Worker deleted successfully.']);
+    if (!$healthWorker) {
+        return response()->json(['error' => 'Health Worker not found.'], 404);
     }
+
+    DB::transaction(function () use ($healthWorker) {
+        // Soft delete the health worker and related user
+        $healthWorker->delete();
+        $healthWorker->user()->delete(); // Assuming 'user' is the relationship method
+
+        // If you have other related models, you may soft delete them here too
+        $healthWorker->appointments()->delete();
+    });
+
+    return response()->json(['success' => 'Health Worker and associated user soft deleted successfully.']);
+}
     public function deletePatient($id)
     {
-        Patient::find($id)->delete();
+        $patient = Patient::find($id);
 
-        return response()->json(['success'=>'Patient deleted successfully.']);
+    if (!$patient) {
+        return response()->json(['error' => 'Patient not found.'], 404);
     }
+
+    DB::transaction(function () use ($patient) {
+        // Soft delete the patient and related user
+        $patient->delete();
+        $patient->user()->delete(); // Assuming 'user' is the relationship method
+
+        // If you have other related models, you may soft delete them here too
+        $patient->appointments()->delete();
+        $patient->vaccinations()->delete();
+    });
+
+    return response()->json(['success' => 'Patient and associated user soft deleted successfully.']);
+}
 }

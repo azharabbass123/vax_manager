@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Province;
+use App\Models\HealthWorker;
+use App\Models\Patient;
 use Illuminate\Http\Request;
 use App\Models\Role;
 use Illuminate\Validation\Rules\Password;
@@ -28,16 +30,26 @@ class RegisterUserController extends Controller
         ]);
         
         $user = User::create($attributes);
+    
+        if ($user->role_id == 2) {
+        
+            HealthWorker::create(['user_id' => $user->id]);
+        } elseif ($user->role_id == 3) {
+        
+            Patient::create(['user_id' => $user->id]);
+        }
 
         Auth::login($user);
 
         session(['userRole' => $user->role_id]);
+        session(['userName' => $user->name]);
+        session(['userId' => $user->id]);
 
         $request->session()->regenerate();
 
         $result = match($user->role_id) {
-            1 => redirect('/admin'),
-            2 => redirect('/health_worker'),
+            "1" => redirect('/admin'),
+            "2" => redirect('/health_worker'),
             default => redirect('/patient'),
         };
 

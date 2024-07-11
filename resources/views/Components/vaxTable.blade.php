@@ -6,7 +6,7 @@
       <table id="vaxTable" class="table table-bordered table-striped text-center">
         <thead>
         <tr>
-        <th class="bg-primary text-white text-center">Sr.</th>
+        <th class="bg-primary text-white text-center">SN</th>
           <th class="bg-primary text-white text-center">Patient Name</th>
           <th class="bg-primary text-white text-center">Date</th>
           <th class="bg-primary text-white text-center">Status</th>

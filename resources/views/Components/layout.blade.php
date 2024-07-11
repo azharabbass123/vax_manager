@@ -57,11 +57,9 @@
     <script src="//cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
 
     <!-- Jquery files   -->
-    <script src="{{ asset('assets/js/adminViewData.js') }}"></script>
-    <script src="{{ asset('assets/js/hwViewData.js') }}"></script>
      
     <!-- Soft Delete fiels   -->
-    <script src="{{ asset('assets/js/softDelete.js') }}"></script>
+    <!-- <script src="{{ asset('assets/js/softDelete.js') }}"></script> -->
 
     <!-- ShowCities  -->
     <script>

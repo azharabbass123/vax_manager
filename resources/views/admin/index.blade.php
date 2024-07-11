@@ -33,4 +33,5 @@
       </div>
     </div> 
     </section>
+    <script src="{{ asset('assets/js/adminViewData.js') }}"></script>
 </x-layout>

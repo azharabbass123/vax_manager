@@ -28,8 +28,16 @@ class SessionController extends Controller
         }
 
         $user = Auth::user();
+        if ($user->deleted_at !== null) {
+            Auth::logout(); // Log out the user if soft deleted
+            throw ValidationException::withMessages([
+                'authFail' => 'Sorry, your account has been deactivated.'
+            ]);
+        }
 
         session(['userRole' => $user->role_id]);
+        session(['userName' => $user->name]);
+        session(['userId' => $user->id]);
 
         $request->session()->regenerate();
 
