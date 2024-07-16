@@ -27,7 +27,7 @@ function loadAppointments() {
     $('#ptAptTable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "fetch-apt",
+        ajax: "fetch-patient-apt",
         columns: [
             { data: 'id', name: 'id' },
             { data: 'patient_name', name: 'patient_Name' },
@@ -53,7 +53,7 @@ function loadVaccinations() {
     $('#ptVaxTable').DataTable({
         processing: true,
         serverSide: true,
-        ajax: "fetch-vax",
+        ajax: "fetch-patient-vax",
         columns: [
             { data: 'id', name: 'id' },
             { data: 'patient_name', name: 'patient_Name' },

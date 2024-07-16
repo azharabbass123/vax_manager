@@ -2,19 +2,22 @@ $(document).ready(function(){
     // Function to fetch cities based on selected province ID
     function fetchHW(date) {
         $.ajax({
-            url: 'controllers/health_worker/availableHw.php',
+            url: 'fetch-avaialble-hw',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
             method: 'post',
-            data: { date: date}
+            data: { date: date }
         }).done(function(hws){
-            hws = JSON.parse(hws);
-            $('#hw').empty();
+            $('#hw_id').empty();
             hws.forEach(function(hw){
-                $('#hw').append(`<option value="${hw.id}">${hw.name}</option>`);
+                $('#hw_id').append(`<option value="${hw.id}">${hw.name}</option>`);
             });
         });
     }
     $('#date').change(function(){
-        var date = $(this).val(); // Get selected province ID
-        fetchHW(date); // Fetch cities based on the selected province
+        var date = $(this).val(); 
+        fetchHW(date); 
     });
+
 });

@@ -42,7 +42,20 @@
 
   
     <main class="main">
-      <x-nav></x-nav>  
+      <x-nav></x-nav> 
+      <div class="row">
+    <div class="col-8">
+        @if (session('status'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('status') }}
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        @endif
+    </div>
+</div>
+ 
         {{$slot}}
     </main>
 

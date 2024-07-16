@@ -182,6 +182,8 @@ window.deletePatient = function(id) {
     }
 };
 
+
+
 window.deleteHw = function(id) {
     if (confirm('Are you sure you want to delete this health worker?')) {
         $.ajax({

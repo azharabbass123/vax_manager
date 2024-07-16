@@ -137,10 +137,29 @@ class AdminController extends Controller
                 return $row->appointment_status ?? 'NA';
             })
             ->make(true);
+            
     }
 
-    
+    public function fetchBlockedUsers(){
+        $users = User::select('id', 'name', 'role_id')
+                        ->onlyTrashed()
+                        ->get();
 
+        return DataTables::of($users)
+        ->addColumn('role_id', function($row) {
+            return ($row->role_id == 2) ? 'Health Worker' : 'Patient';
+        })
+        ->addColumn('action', function($row) {
+            $btn = '<button type="button" onclick="unBlockUsers('.$row->id.')" class="btn btn-sm btn-success">Restore</button>';
+            return $btn;
+        })
+        ->rawColumns(['action'])
+        ->make(true);
+    }
+    
+    public function showBlockedUsers(){
+        return View('admin.blockedUsers');
+    }
     public function deleteHW($id)
     {
         $healthWorker = HealthWorker::find($id);
@@ -180,4 +199,49 @@ class AdminController extends Controller
 
     return response()->json(['success' => 'Patient and associated user soft deleted successfully.']);
 }
+
+    public function unBlockUser($id){
+        $user = User::withTrashed()->find($id);
+        if($user->role_id == 2){
+            return AdminController::restoreHw($user->id);
+        }
+        else{
+            return AdminController::restorePatient($user->id);
+        }
+    }
+
+    private function restoreHw($userId){
+        $health_worker = HealthWorker::withTrashed()
+                            ->where('user_id', $userId)
+                            ->first();
+        DB::transaction(function () use ($health_worker) {
+            // Restore the patient and associated user
+            $health_worker->restore();
+            $health_worker->user()->restore(); // Assuming 'user' is the relationship method
+    
+            // If there are other related models, restore them here too
+            $health_worker->appointments()->restore();
+        });
+    
+        return response()->json(['success' => 'Health Worker and associated user restored success']);    
+
+    }
+    private function restorePatient($userId){
+        $patient = Patient::withTrashed()
+                            ->where('user_id', $userId)
+                            ->first();
+
+        DB::transaction(function () use ($patient) {
+            // Restore the patient and associated user
+            $patient->restore();
+            $patient->user()->restore(); // Assuming 'user' is the relationship method
+    
+            // If there are other related models, restore them here too
+            $patient->appointments()->restore();
+            $patient->vaccinations()->restore();
+        });
+    
+        return response()->json(['success' => 'Patient and associated user restored successfully.']);
+    
+    }
 }

@@ -12,7 +12,7 @@
       <button class="mySidebar-btn" id="appointment">Appointments</button>
       <button class="mySidebar-btn" id="vaccination">Vaccination</button>
       <a
-          href="patientDetail"
+          href="/blockedUsers"
           class="bg-success w-50 mt-5 mx-5 text-center text-white text-decoration-none p-2 rounded"
           >Un-Block Users</a>
     </div> 

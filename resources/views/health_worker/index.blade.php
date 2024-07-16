@@ -17,7 +17,7 @@
           >Schedule new vax plan</a
         >
       <a
-          href="editProfile?id={{session('userId')}}"
+          href="/edit/{{session('userId')}}"
           class="bg-info w-50 mt-5 mx-2 text-center text-white text-decoration-none p-2 rounded"
           >Edit Profile</a>
     </div> 
@@ -40,7 +40,6 @@
           <th class="bg-primary text-white text-center">Apt. Date</th>
           <th class="bg-primary text-white text-center">Status</th>
           <th class="bg-primary text-white text-center">Edit</th>
-          <th class="bg-primary text-white text-center">Delete</th>
         </tr>
         </thead>
       </table>
@@ -60,7 +59,6 @@
           <th class="bg-primary text-white text-center">Vax. Date</th>
           <th class="bg-primary text-white text-center">Status</th>
           <th class="bg-primary text-white text-center">Edit</th>
-          <th class="bg-primary text-white text-center">Delete</th>
         </tr>
         </thead>
       </table>
@@ -73,16 +71,17 @@
       <h3 class="display-6 fw-bold text-center text-primary">Patient Details</h3>
     </div>
     <div class="card-body">
-      <table id="table" class="table table-bordered table-striped text-center">
+      <table id="trackPatientsTable" class="table table-bordered table-striped text-center">
         <thead>
         <tr>
-          <th class="bg-primary text-white text-center">Sr.</th>
+          <th class="bg-primary text-white text-center">SN</th>
           <th class="bg-primary text-white text-center">Name</th>
           <th class="bg-primary text-white text-center">Email</th>
           <th class="bg-primary text-white text-center">City</th>
           <th class="bg-primary text-white text-center">Province</th>
           <th class="bg-primary text-white text-center">Vax date</th>
-          <th class="bg-primary text-white text-center">Vax status</th>
+          <th class="bg-primary text-white text-center">Vax Status</th>
+          <th class="bg-primary text-white text-center">Action</th>
         </tr>
         </thead>
       </table>

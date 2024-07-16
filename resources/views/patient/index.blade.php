@@ -15,7 +15,7 @@
           class="mySidebar-btn mt-2 mx-2 text-center btn text-dark text-decoration-none p-2 rounded"
           >Create new Appointment</a>
       <a
-          href="editProfile?id="
+          href="/edit/{{session('userId')}}"
           class="bg-info w-50 mt-5 mx-2 text-center text-white text-decoration-none p-2 rounded"
           >Edit Profile</a>
     </div> 
