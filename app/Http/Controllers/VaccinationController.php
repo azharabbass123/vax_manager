@@ -5,19 +5,14 @@ namespace App\Http\Controllers;
 use App\Models\Vaccination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use App\Http\Controllers\HealthWorkerController;
 class VaccinationController extends Controller
 {
     public function create()
     {
-        $patients = DB::table('patients')
-        ->join('users', 'patients.user_id', '=', 'users.id')
-        ->select([
-            'patients.id',
-            'users.name as user_name',])
-        ->whereNull('patients.deleted_at')    
-        ->get(); 
-        return view('vaccination.index', ['patients' => $patients]);
+        $hwController = new HealthWorkerController();
+        $patients = $hwController->trackPatients();
+        return view('vaccination.index', ['patients' => $patients->getData()->data]);
     }
 
     public function store(Request $request)

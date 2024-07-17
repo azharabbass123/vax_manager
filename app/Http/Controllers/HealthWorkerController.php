@@ -5,7 +5,10 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\User;
-use  App\Models\Patient;
+use App\Models\Patient;
+use App\Models\Vaccination;
+use App\Models\Appointment;
+use App\Models\HealthWorker;
 
 class HealthWorkerController extends Controller
 {
@@ -15,33 +18,30 @@ class HealthWorkerController extends Controller
     }
 
     static function fetchHwId(){
-        $hwId = DB::table('users')
-          ->join('health_workers', 'users.id', '=', 'health_workers.user_id')
-          ->where('users.id', '=', session('userId'))
-          ->select('health_workers.id')
-          ->get();
+        $hwId = HealthWorker::select('id')
+          ->where('user_id', session('userId'))
+          ->first();
     
-        return $hwId['0']->id;  
+        return $hwId->id;  
     }
 
     public function fetchAppointments()
     
     {
         $hw_id = HealthWorkerController::fetchHwId();
-        $data = DB::table('appointments')
-                ->join('patients', 'appointments.patient_id', '=', 'patients.id')
-                ->join('users as patient_users', 'patients.user_id', '=', 'patient_users.id')
-                ->join('health_workers', 'appointments.hw_id', '=', 'health_workers.id')
-                ->join('users as hw_users', 'health_workers.user_id', '=', 'hw_users.id')
-                ->select([
-                    'appointments.id',
-                    'patient_users.name as patient_name',
-                    'hw_users.name as health_worker_name',
-                    'appointments.apt_Date as appointment_date',
-                    'appointments.apt_Status as appointment_status'
-                ])
-                ->where('appointments.hw_id', '=', $hw_id)
-                ->get();
+        $data = Appointment::select([
+                            'appointments.id',
+                            'patient_users.name as patient_name',
+                            'hw_users.name as health_worker_name',
+                            'appointments.apt_Date as appointment_date',
+                            'appointments.apt_Status as appointment_status'
+                            ])
+                            ->join('patients', 'appointments.patient_id', '=', 'patients.id')
+                            ->join('users as patient_users', 'patients.user_id', '=', 'patient_users.id')
+                            ->join('health_workers', 'appointments.hw_id', '=', 'health_workers.id')
+                            ->join('users as hw_users', 'health_workers.user_id', '=', 'hw_users.id')
+                            ->where('appointments.hw_id', '=', $hw_id)
+                            ->get();
 
         return DataTables::of($data)
             ->addColumn('patient_name', function($row) {
@@ -65,14 +65,13 @@ class HealthWorkerController extends Controller
 
     public function fetchVaccinations()
     {
-        $data = DB::table('vaccinations')
-                        ->join('patients', 'vaccinations.patient_id', '=', 'patients.id')
-                        ->join('users', 'patients.user_id', '=', 'users.id')
-                        ->select([
+        $data = Vaccination::select([
                             'vaccinations.id',
                             'users.name as patient_name',
                             'vaccinations.vax_Date as vax_date', 
                             'vaccinations.vax_Status as vax_status'])
+                            ->join('patients', 'vaccinations.patient_id', '=', 'patients.id')
+                            ->join('users', 'patients.user_id', '=', 'users.id')
                             ->get();
                             
 
@@ -94,10 +93,9 @@ class HealthWorkerController extends Controller
     }
 
     public function trackPatients(){
-        $hw_province = DB::table('users')
+        $hw_province = User::select('provinces.id')
                             ->join('cities', 'cities.id', '=', 'users.city_id')
                             ->join('provinces', 'provinces.id', '=', 'cities.province_id')
-                            ->select('provinces.id')
                             ->where('users.id', '=', session('userId'))
                             ->get();
         
@@ -107,20 +105,19 @@ class HealthWorkerController extends Controller
     }
 
     private function fetchPatients($province_id){
-        $trackedPatients = DB::table('patients')
+        $trackedPatients = Patient::select(['users.id AS id',
+                                    'users.id AS patient_id',
+                                    'users.name AS patient_name',
+                                    'users.email AS patient_email',
+                                    'cities.name AS city_name',
+                                    'provinces.name AS province_name',
+                                    'vaccinations.vax_Date AS vax_date',
+                                    'vaccinations.vax_Status AS vax_status'])
                                 ->join('users', 'patients.user_id', '=', 'users.id')
                                 ->join('cities', 'users.city_id' , '=', 'cities.id')
                                 ->join('provinces', 'cities.province_id', '=', 'provinces.id')
                                 ->leftJoin('vaccinations', 'patients.id', '=', 'vaccinations.patient_id')
                                 ->where('provinces.id', '=', $province_id)
-                                ->select('users.id AS id',
-                                    'users.id AS patient_id',
-                                'users.name AS patient_name',
-                                'users.email AS patient_email',
-                                'cities.name AS city_name',
-                                'provinces.name AS province_name',
-                                'vaccinations.vax_Date AS vax_date',
-                                'vaccinations.vax_Status AS vax_status')
                                 ->get();
 
             return DataTables::of($trackedPatients)

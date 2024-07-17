@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class ApointmentController extends Controller
 {
@@ -22,10 +23,9 @@ class ApointmentController extends Controller
             'apt_Date' => ['required'],
             'apt_Status' => ['required']
         ]);
-      $patientId = DB::table('users')
+      $patientId = User::select('patients.id')
           ->join('patients', 'users.id', '=', 'patients.user_id')
           ->where('users.id', '=', $request->patient_id)
-          ->select('patients.id')
           ->get();
         Appointment::create([
             'patient_id' => $patientId['0']->id,

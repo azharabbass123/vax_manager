@@ -12,8 +12,10 @@ class Vaccination extends Model
     use SoftDeletes;
     protected $fillable = ['patient_id', 'vax_Date', 'vax_Status'];
     protected $dates = ['deleted_at'];
+    protected $table = 'vaccinations';
+
     public function patient()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(Patient::class, 'patient_id', 'id');
     }
 }

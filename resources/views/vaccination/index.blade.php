@@ -30,7 +30,7 @@
         <select name="patient_id" id="patient" class="form-select" required="">
           <option selected="" disabled="">Select Patient</option>
           @foreach ($patients as $patient)
-        <option id="{{ $patient->id }}" value="{{ $patient->id }}">{{ $patient->user_name }}</option>
+        <option id="{{ $patient->id }}" value="{{ $patient->id }}">{{ $patient->patient_name }}</option>
         @endforeach
         </select>
         @error('patient_id')

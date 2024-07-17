@@ -12,13 +12,15 @@ class HealthWorker extends Model
     use SoftDeletes;
     protected $fillable = ['user_id'];
     protected $dates = ['deleted_at'];
+    protected $table = 'health_workers';
+
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function appointments()
     {
-        return $this->hasMany(Appointment::class, 'hw_id');
+        return $this->hasMany(Appointment::class, 'hw_id', 'id');
     }
 }

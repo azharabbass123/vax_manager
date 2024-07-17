@@ -12,13 +12,16 @@ class Appointment extends Model
     use SoftDeletes;
     protected $fillable = ['patient_id', 'hw_id', 'apt_Date', 'apt_Status'];
     protected $dates = ['deleted_at'];
-    public function healthWorker()
-    {
-        return $this->belongsTo(HealthWorker::class, 'hw_id');
-    }
+    protected $table = 'appointments';
 
     public function patient()
     {
-        return $this->belongsTo(Patient::class);
+        return $this->belongsTo(Patient::class, 'patient_id', 'id');
+    }
+
+    // Assuming HealthWorker is related to appointments through some foreign key
+    public function healthWorker()
+    {
+        return $this->belongsTo(HealthWorker::class, 'hw_id', 'id');
     }
 }

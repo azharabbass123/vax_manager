@@ -19,15 +19,14 @@ class AdminController extends Controller
 
     public function fetchHealthWorkers()
 {
-    $data = DB::table('health_workers')
-                ->join('users', 'health_workers.user_id', '=', 'users.id')
-                ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
-                ->select([
+    $data = HealthWorker::select([
                     'health_workers.id',
                     'users.name as user_name',
                     'users.email as user_email',
                     'cities.name as city_name'
                 ])
+                ->join('users', 'health_workers.user_id', '=', 'users.id')
+                ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
                 ->whereNull('health_workers.deleted_at')
                 ->get();
 
@@ -51,14 +50,13 @@ class AdminController extends Controller
     
     public function fetchPatients()
     {
-        $data = DB::table('patients')
+        $data = Patient::select([
+                        'patients.id',
+                        'users.name as user_name',
+                        'users.email as user_email',
+                        'cities.name as city_name'])
                         ->join('users', 'patients.user_id', '=', 'users.id')
                         ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
-                        ->select([
-                            'patients.id',
-                            'users.name as user_name',
-                            'users.email as user_email',
-                            'cities.name as city_name'])
                         ->whereNull('patients.deleted_at')    
                         ->get(); // Fetch all health workers with related user and city data
 
@@ -82,14 +80,13 @@ class AdminController extends Controller
     
     public function fetchVaccinations()
     {
-        $data = DB::table('vaccinations')
-                        ->join('patients', 'vaccinations.patient_id', '=', 'patients.id')
-                        ->join('users', 'patients.user_id', '=', 'users.id')
-                        ->select([
+        $data = Vaccination::select([
                             'vaccinations.id',
                             'users.name as patient_name',
                             'vaccinations.vax_Date as vax_date', 
                             'vaccinations.vax_Status as vax_status'])
+                            ->join('patients', 'vaccinations.patient_id', '=', 'patients.id')
+                            ->join('users', 'patients.user_id', '=', 'users.id')
                             ->get();
                             
 
@@ -109,18 +106,17 @@ class AdminController extends Controller
     public function fetchAppointments()
     
     {
-        $data = DB::table('appointments')
+        $data = Appointment::select([
+                            'appointments.id',
+                            'patient_users.name as patient_name',
+                            'hw_users.name as health_worker_name',
+                            'appointments.apt_Date as appointment_date',
+                            'appointments.apt_Status as appointment_status'
+                            ])
                 ->join('patients', 'appointments.patient_id', '=', 'patients.id')
                 ->join('users as patient_users', 'patients.user_id', '=', 'patient_users.id')
                 ->join('health_workers', 'appointments.hw_id', '=', 'health_workers.id')
                 ->join('users as hw_users', 'health_workers.user_id', '=', 'hw_users.id')
-                ->select([
-                    'appointments.id',
-                    'patient_users.name as patient_name',
-                    'hw_users.name as health_worker_name',
-                    'appointments.apt_Date as appointment_date',
-                    'appointments.apt_Status as appointment_status'
-                ])
                 ->get();
 
         return DataTables::of($data)

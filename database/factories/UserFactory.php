@@ -37,9 +37,11 @@ class UserFactory extends Factory
         // Randomly select a role ID and city ID
         $roleId = $this->faker->randomElement($roleIds);
         $cityId = $this->faker->randomElement($cityIds);
+
+        $name = $this->faker->firstNameFemale(); // For female names
     
         return [
-            'name' => $this->faker->name,
+            'name' => $name,
             'email' => $this->faker->unique()->safeEmail,
             'password' => bcrypt('password'), // Change as needed
             'DOB' => $this->faker->date(),

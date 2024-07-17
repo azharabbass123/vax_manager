@@ -11,13 +11,15 @@ class City extends Model
 
     protected $fillable = ['name', 'province_id'];
 
+    protected $table = 'cities';
+
     public function province()
     {
-        return $this->belongsTo(Province::class);
+        return $this->belongsTo(Province::class, 'province_id', 'id');
     }
 
     public function users()
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'city_id', 'id');
     }
 }

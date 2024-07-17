@@ -42,21 +42,25 @@ class User extends Authenticatable
         ];
     }
 
-    public function role(){
-        return $this->belongsTo(Role::class);
+    protected $table = 'users';
+
+    public function city()
+    {
+        return $this->belongsTo(City::class, 'city_id', 'id');
     }
 
-    public function city(){
-        return $this->belongsTo(City::class, 'city_id');
+    public function role()
+    {
+        return $this->belongsTo(Role::class, 'role_id', 'id');
     }
 
     public function healthWorker()
     {
-        return $this->hasOne(HealthWorker::class);
+        return $this->hasOne(HealthWorker::class, 'user_id', 'id');
     }
 
     public function patient()
     {
-        return $this->hasOne(Patient::class);
+        return $this->hasOne(Patient::class, 'user_id', 'id');
     }
 }

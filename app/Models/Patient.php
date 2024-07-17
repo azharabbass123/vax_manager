@@ -13,16 +13,22 @@ class Patient extends Model
 
     protected $fillable = ['user_id'];
     protected $dates = ['deleted_at'];
-    public function user(){
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    protected $table = 'patients';
 
-    public function Appointments(){
-        return $this->hasMany(Appointment::class, 'patient_id');
-    }
 
-    public function Vaccinations()
+    public function user()
     {
-        return $this->hasMany(Vaccination::class, 'patient_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
+
+    public function vaccinations()
+    {
+        return $this->hasMany(Vaccination::class, 'patient_id', 'id');
+    }
+
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'patient_id', 'id');
+    }
+
 }
