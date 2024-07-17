@@ -105,7 +105,7 @@ class HealthWorkerController extends Controller
     }
 
     private function fetchPatients($province_id){
-        $trackedPatients = Patient::select(['users.id AS id',
+        $trackedPatients = Patient::select(['patients.id AS id',
                                     'users.id AS patient_id',
                                     'users.name AS patient_name',
                                     'users.email AS patient_email',

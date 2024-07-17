@@ -7,27 +7,28 @@ use App\Http\Controllers\HealthWorkerController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\ApointmentController;
 use App\Http\Controllers\VaccinationController;
+use App\Http\Middleware\Guest;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\ValidUser;
 use App\Http\Middleware\Admin;
 use App\Http\Middleware\HealthWorker;
 use App\Http\Middleware\Patient;
 
+
+Route::middleware(Guest::class)->group(function (){
+
+
 Route::get('/', function () {
     return view('home');
 });
 
-
 Route::get('/register', [RegisterUserController::class, 'create']);
 Route::post('/register', [RegisterUserController::class, 'store']);
-Route::get('/edit/{id}', [RegisterUserController::class, 'edit']);
-Route::patch('/update/{id}', [RegisterUserController::class, 'update']);
-Route::post('/fetch-cities', [RegisterUserController::class, 'fetchCities'])->name('fetch-cities');
-Route::post('/fetch-avaialble-hw', [RegisterUserController::class, 'fetchHw'])->name('fetch-avaialble-hw');
 
 Route::get('/session', [SessionController::class, 'create'])->name('session');
 Route::post('/session', [SessionController::class, 'store']);
-Route::delete('/session', [SessionController::class, 'destroy']);
+
+});
 
 Route::middleware(Admin::class)->group(function () {
     Route::get('/admin', [AdminController::class, 'create'])->name('admin');
@@ -61,10 +62,16 @@ Route::middleware(Patient::class)->group(function(){
 });
 
 Route::middleware(ValidUser::class)->group(function(){
+    Route::get('/edit/{id}', [RegisterUserController::class, 'edit']);
+    Route::patch('/update/{id}', [RegisterUserController::class, 'update']);
+    Route::post('/fetch-cities', [RegisterUserController::class, 'fetchCities'])->name('fetch-cities');
+    Route::post('/fetch-avaialble-hw', [RegisterUserController::class, 'fetchHw'])->name('fetch-avaialble-hw');
+    Route::delete('/session', [SessionController::class, 'destroy']);
+
 
     Route::get('/appointment', [ApointmentController::class, 'create']);
     Route::post('/appointment', [ApointmentController::class, 'store']);
     Route::get('/vaccination',[VaccinationController::class, 'create']);
     Route::post('/vaccination',[VaccinationController::class, 'store']);
-    
+
 });
