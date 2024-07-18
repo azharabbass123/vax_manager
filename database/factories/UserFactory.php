@@ -39,6 +39,7 @@ class UserFactory extends Factory
         $cityId = $this->faker->randomElement($cityIds);
 
         // $name = $this->faker->firstNameFemale(); // For female names
+        //$name = $this->faker->firstNameFemale(); // For female names
     
         return [
             'name' => $this->faker->name,
