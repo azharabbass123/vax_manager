@@ -26,58 +26,42 @@ class PatientController extends Controller
     
     {
         $patient_id = PatientController::fetchPatientId();
-        $data = Appointment::select([
-                            'appointments.id',
-                            'patient_users.name as patient_name',
-                            'hw_users.name as health_worker_name',
-                            'appointments.apt_Date as appointment_date',
-                            'appointments.apt_Status as appointment_status'
-                            ])
-                ->join('patients', 'appointments.patient_id', '=', 'patients.id')
-                ->join('users as patient_users', 'patients.user_id', '=', 'patient_users.id')
-                ->join('health_workers', 'appointments.hw_id', '=', 'health_workers.id')
-                ->join('users as hw_users', 'health_workers.user_id', '=', 'hw_users.id')
-                ->where('appointments.patient_id', '=', $patient_id)
-                ->get();
+        $data = Appointment::with(['patient.user', 'healthWorker.user'])
+                            ->where('appointments.patient_id', '=', $patient_id)
+                            ->get();
 
         return DataTables::of($data)
             ->addColumn('patient_name', function($row) {
-                return $row->patient_name ?? 'NA';
+                return $row->patient->user->name ?? 'NA';
             })
             ->addColumn('health_worker_name', function($row) {
-                return $row->health_worker_name ?? 'NA';
+                return $row->healthWorker->user->name ?? 'NA';
             })
             ->addColumn('appointment_date', function($row) {
-                return $row->appointment_date ?? 'NA';
+                return $row->apt_Date ?? 'NA';
             })
             ->addColumn('appointment_status', function($row) {
-                return $row->appointment_status ?? 'NA';
+                return $row->apt_Status ?? 'NA';
             })
             ->make(true);
     }
     public function fetchVaccinations()
     {
         $patient_id = PatientController::fetchPatientId();
-        $data = Vaccination::select([
-                            'vaccinations.id',
-                            'users.name as patient_name',
-                            'vaccinations.vax_Date as vax_date', 
-                            'vaccinations.vax_Status as vax_status'])
-                        ->join('patients', 'vaccinations.patient_id', '=', 'patients.id')
-                        ->join('users', 'patients.user_id', '=', 'users.id')
+        $data = Vaccination::with(['patient.user'])
                         ->where('vaccinations.patient_id', '=', $patient_id)
                         ->get();
                             
 
             return DataTables::of($data)
                 ->addColumn('patient_name', function($row){
-                    return $row->patient_name ?? 'NA';
+                    return $row->patient->user->name ?? 'NA';
                 })
                 ->addColumn('vax_date', function($row){
-                    return $row->vax_date ?? 'NA';
+                    return $row->vax_Date ?? 'NA';
                 })
                 ->addColumn('vax_status', function($row){
-                    return $row->vax_status ?? 'NA';
+                    return $row->vax_Status ?? 'NA';
                 })
                 ->make(true);
     }

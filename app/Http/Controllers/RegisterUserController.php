@@ -68,16 +68,12 @@ class RegisterUserController extends Controller
 
     public function fetchHw(Request $request){
         $date = $request->input('date');
-    $healthWorkers = DB::table('health_workers as hw')
-    ->select('hw.id as id', 'u.name as name')
-    ->join('users as u', 'hw.user_id', '=', 'u.id')
-    ->where('u.role_id', 2) // Assuming health workers have role_id 2
-    ->whereNull('u.deleted_at')
-    ->whereNotExists(function ($query) use ($date) {
-        $query->select(DB::raw(1))
-            ->from('appointments')
-            ->whereColumn('appointments.hw_id', 'hw.id')
-            ->whereDate('appointments.apt_Date', '=', $date);
+    $healthWorkers = HealthWorker::select('health_workers.id as id', 'users.name as name')
+    ->join('users', 'health_workers.user_id', '=', 'users.id')
+    ->where('users.role_id', 2) // Assuming health workers have role_id 2
+    ->whereNull('users.deleted_at')
+    ->whereDoesntHave('appointments', function ($query) use ($date) {
+        $query->whereDate('apt_Date', $date);
     })
     ->get();
 

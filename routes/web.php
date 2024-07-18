@@ -17,13 +17,13 @@ use App\Http\Middleware\Patient;
 
 Route::middleware(Guest::class)->group(function (){
 
-
 Route::get('/', function () {
     return view('home');
 });
 
 Route::get('/register', [RegisterUserController::class, 'create']);
 Route::post('/register', [RegisterUserController::class, 'store']);
+Route::post('/fetch-cities', [RegisterUserController::class, 'fetchCities'])->name('fetch-cities');
 
 Route::get('/session', [SessionController::class, 'create'])->name('session');
 Route::post('/session', [SessionController::class, 'store']);
@@ -64,7 +64,6 @@ Route::middleware(Patient::class)->group(function(){
 Route::middleware(ValidUser::class)->group(function(){
     Route::get('/edit/{id}', [RegisterUserController::class, 'edit']);
     Route::patch('/update/{id}', [RegisterUserController::class, 'update']);
-    Route::post('/fetch-cities', [RegisterUserController::class, 'fetchCities'])->name('fetch-cities');
     Route::post('/fetch-avaialble-hw', [RegisterUserController::class, 'fetchHw'])->name('fetch-avaialble-hw');
     Route::delete('/session', [SessionController::class, 'destroy']);
 

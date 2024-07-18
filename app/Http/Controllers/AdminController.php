@@ -19,26 +19,18 @@ class AdminController extends Controller
 
     public function fetchHealthWorkers()
 {
-    $data = HealthWorker::select([
-                    'health_workers.id',
-                    'users.name as user_name',
-                    'users.email as user_email',
-                    'cities.name as city_name'
-                ])
-                ->join('users', 'health_workers.user_id', '=', 'users.id')
-                ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
-                ->whereNull('health_workers.deleted_at')
-                ->get();
+    $data = HealthWorker::with('user.city') // Eager load user and city relationships
+                            ->get();
 
         return DataTables::of($data)
             ->addColumn('name', function($row) {
-                return $row->user_name ?? 'N/A';
+                return $row->user->name ?? 'N/A';
             })
             ->addColumn('email', function($row) {
-                return $row->user_email ?? 'N/A';
+                return $row->user->email ?? 'N/A';
             })
             ->addColumn('city_name', function($row) {
-                return $row->city_name ?? 'N/A';
+                return $row->user->city->name ?? 'N/A';
             })
             ->addColumn('action', function($row) {
                 $btn = '<button type="button" onclick="deleteHw('.$row->id.')" class="btn btn-sm btn-danger">Delete</button>';
@@ -50,25 +42,18 @@ class AdminController extends Controller
     
     public function fetchPatients()
     {
-        $data = Patient::select([
-                        'patients.id',
-                        'users.name as user_name',
-                        'users.email as user_email',
-                        'cities.name as city_name'])
-                        ->join('users', 'patients.user_id', '=', 'users.id')
-                        ->leftJoin('cities', 'users.city_id', '=', 'cities.id')
-                        ->whereNull('patients.deleted_at')    
-                        ->get(); // Fetch all health workers with related user and city data
+        $data = Patient::with('user.city')  
+                        ->get();
 
                         return DataTables::of($data)
                         ->addColumn('name', function($row) {
-                            return $row->user_name ?? 'N/A';
+                            return $row->user->name ?? 'N/A';
                         })
                         ->addColumn('email', function($row) {
-                            return $row->user_email ?? 'N/A';
+                            return $row->user->email ?? 'N/A';
                         })
                         ->addColumn('city_name', function($row) {
-                            return $row->city_name ?? 'N/A';
+                            return $row->user->city->name ?? 'N/A';
                         })
                         ->addColumn('action', function($row) {
                             $btn = '<button type="button" onclick="deletePatient('.$row->id.')" class="btn btn-sm btn-danger">Delete</button>';
@@ -80,25 +65,18 @@ class AdminController extends Controller
     
     public function fetchVaccinations()
     {
-        $data = Vaccination::select([
-                            'vaccinations.id',
-                            'users.name as patient_name',
-                            'vaccinations.vax_Date as vax_date', 
-                            'vaccinations.vax_Status as vax_status'])
-                            ->join('patients', 'vaccinations.patient_id', '=', 'patients.id')
-                            ->join('users', 'patients.user_id', '=', 'users.id')
+        $data = Vaccination::with(['patient.user'])
                             ->get();
                             
-
             return DataTables::of($data)
                 ->addColumn('patient_name', function($row){
-                    return $row->patient_name ?? 'NA';
+                    return $row->patient->user->name ?? 'NA';
                 })
                 ->addColumn('vax_date', function($row){
-                    return $row->vax_date ?? 'NA';
+                    return $row->vax_Date ?? 'NA';
                 })
                 ->addColumn('vax_status', function($row){
-                    return $row->vax_status ?? 'NA';
+                    return $row->vax_Status ?? 'NA';
                 })
                 ->make(true);
     }
@@ -106,31 +84,20 @@ class AdminController extends Controller
     public function fetchAppointments()
     
     {
-        $data = Appointment::select([
-                            'appointments.id',
-                            'patient_users.name as patient_name',
-                            'hw_users.name as health_worker_name',
-                            'appointments.apt_Date as appointment_date',
-                            'appointments.apt_Status as appointment_status'
-                            ])
-                ->join('patients', 'appointments.patient_id', '=', 'patients.id')
-                ->join('users as patient_users', 'patients.user_id', '=', 'patient_users.id')
-                ->join('health_workers', 'appointments.hw_id', '=', 'health_workers.id')
-                ->join('users as hw_users', 'health_workers.user_id', '=', 'hw_users.id')
-                ->get();
-
+        $data = Appointment::with(['patient.user', 'healthWorker.user'])
+                            ->get();
         return DataTables::of($data)
             ->addColumn('patient_name', function($row) {
-                return $row->patient_name ?? 'NA';
+                return $row->patient->user->name ?? 'NA';
             })
             ->addColumn('health_worker_name', function($row) {
-                return $row->health_worker_name ?? 'NA';
+                return $row->healthWorker->user->name ?? 'NA';
             })
             ->addColumn('appointment_date', function($row) {
-                return $row->appointment_date ?? 'NA';
+                return $row->apt_Date ?? 'NA';
             })
             ->addColumn('appointment_status', function($row) {
-                return $row->appointment_status ?? 'NA';
+                return $row->apt_Status ?? 'NA';
             })
             ->make(true);
             
