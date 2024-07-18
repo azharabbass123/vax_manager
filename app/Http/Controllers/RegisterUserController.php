@@ -25,7 +25,7 @@ class RegisterUserController extends Controller
             'name' => ['required'],
             'email' => ['required', 'email', 'unique:users,email'],
             'DOB' => ['required'],
-            'role_id' => ['required'],
+            'role_id' => ['required', 'in:2,3'],
             'city_id' => ['required'],
             'password' => ['required', Password::min(6)],
         ]);
