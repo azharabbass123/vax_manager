@@ -30,8 +30,8 @@
         <select name="patient_id" id="patient" class="form-select" required="">
           <option selected="" disabled="">Select Patient</option>
           @php
-        // Convert the array $patients to a collection
-        $patientCollection = collect($patients);
+          // Convert the array $patients to a collection
+          $patientCollection = collect($patients);
         @endphp
           @foreach ($patientCollection->unique('patient_name') as $patient)
         <option id="{{ $patient->id }}" value="{{ $patient->id }}">{{ $patient->patient_name }}</option>
@@ -51,14 +51,6 @@
     </div>
     </div>
 
-    <!-- <div class="form-group mt-3">
-      <textarea class="form-control" name="message" rows="5" placeholder="Message (Optional)"></textarea>
-    </div> -->
-    <!-- <div class="mb-3">
-      <div class="loading">Loading</div>
-      <div class="error-message"></div>
-      <div class="sent-message">Your appointment request has been sent successfully. Thank you!</div>
-    </div> -->
     
   </form>
 
