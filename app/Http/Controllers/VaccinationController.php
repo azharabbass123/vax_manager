@@ -6,6 +6,7 @@ use App\Models\Vaccination;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\HealthWorkerController;
+
 class VaccinationController extends Controller
 {
     public function create()
@@ -17,7 +18,8 @@ class VaccinationController extends Controller
 
     public function store(Request $request)
     {
-      
+        dd('yes');
+
         $attributes = $request->validate([
             'patient_id' => ['required'],
             'vax_Date' => ['required'],
@@ -27,7 +29,7 @@ class VaccinationController extends Controller
             $attributes
         );
 
-        return redirect('/health_worker');
+        return redirect()->route('health_worker');
     }
 
     public function edit($id)
@@ -47,7 +49,5 @@ class VaccinationController extends Controller
 
         $vaccination->save();
         return redirect('/health_worker')->with('status', 'Data updated Successfully');
-
-
     }
 }
