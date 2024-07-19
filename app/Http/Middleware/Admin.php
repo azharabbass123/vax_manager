@@ -3,9 +3,10 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class Admin
 {
@@ -16,23 +17,16 @@ class Admin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        
-        if((session('userRole') == 1) && (Auth::check()))
-        {
+        $user = Auth::user()->role_id;
+
+        if (Auth::user()->role_id == 1) {
             return $next($request);
-        }
-        else if((session('userRole') == 2) && (Auth::check()))
-        {
+        } else if (Auth::user()->role_id == 2) {
             return redirect()->route('health_worker');
-        }
-        else if((session('userRole') == 3) && (Auth::check()))
-        {
+        } else if (Auth::user()->role_id == 3) {
             return redirect()->route('patient');
-        }
-        else
-        {
+        } else {
             return redirect()->route('session');
         }
-
     }
 }

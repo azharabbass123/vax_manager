@@ -10,7 +10,7 @@ use App\Models\Role;
 use Illuminate\Validation\Rules\Password;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+
 class RegisterUserController extends Controller
 {
     public function create()
@@ -42,11 +42,11 @@ class RegisterUserController extends Controller
 
         Auth::login($user);
 
-        session(['userRole' => $user->role_id]);
-        session(['userName' => $user->name]);
-        session(['userId' => $user->id]);
+        // session(['userRole' => $user->role_id]);
+        // session(['userName' => $user->name]);
+        // session(['userId' => $user->id]);
 
-        $request->session()->regenerate();
+        // $request->session()->regenerate();
 
         $result = match($user->role_id) {
             "1" => redirect('/admin'),

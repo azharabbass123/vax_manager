@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,20 +15,22 @@ class SessionController extends Controller
         return view('auth.login', ['roles' => $roles]);
     }
 
-    public function store(Request $request){
+    public function store(Request $request)
+    {
         $attributes = $request->validate([
-         'email' => ['required', 'email'],
-         'password' => ['required'],
-         'role_id' => ['required']
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+            'role_id' => ['required']
         ]);
- 
-        if(! (Auth::attempt($attributes))){
-             throw ValidationException::withMessages([
-                 'authFail' => 'sorry those credentials did not match'
-             ]);
+
+        if (!Auth::attempt($attributes)) {
+            throw ValidationException::withMessages([
+                'authFail' => 'Sorry, those credentials did not match.'
+            ]);
         }
 
         $user = Auth::user();
+
         if ($user->deleted_at !== null) {
             Auth::logout(); // Log out the user if soft deleted
             throw ValidationException::withMessages([
@@ -35,22 +38,20 @@ class SessionController extends Controller
             ]);
         }
 
-        session(['userRole' => $user->role_id]);
-        session(['userName' => $user->name]);
-        session(['userId' => $user->id]);
+        //$request->session()->regenerate();
 
-        $request->session()->regenerate();
-
-        $result = match($user->role_id) {
-            1 => redirect('/admin'),
-            2 => redirect('/health_worker'),
-            default => redirect('/patient'),
+        $redirectRoute = match ($user->role_id) {
+            1 => '/admin',
+            2 => '/health_worker',
+            3 => '/patient',
+            default => '/login' // Default redirection if role_id is unexpected
         };
-        
-        return $result;
-     }
 
-     public function destroy(){
+        return redirect()->intended($redirectRoute);
+    }
+
+    public function destroy()
+    {
         Auth::logout();
 
         return redirect('/');

@@ -21,11 +21,13 @@
           
             @auth
                 <div class="ml-3 mt-2 d-flex">
+            
                 @if (auth()->check() && session('userRole') == 2)
                   <img src="{{ asset('assets/img/doctors/doctors-3.jpg') }}" alt="doctor" class="my-nav-img">
                 @elseif (auth()->check() && (session('userRole') == 1 || session('userRole') == 3))
                   <img src="{{ asset('assets/img/testimonials/testimonials-5.jpg') }}" alt="doctor" class="my-nav-img">
                 @endif
+
                 <form action="session" method="post">
                     @csrf
                     @method('DELETE')

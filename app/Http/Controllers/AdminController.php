@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\DB;
 class AdminController extends Controller
 {
     public function create()
-    {
+    {       
+
         return View('admin.index');
     }
 
@@ -21,7 +22,7 @@ class AdminController extends Controller
 {
     $data = HealthWorker::with('user.city') // Eager load user and city relationships
                             ->get();
-
+        
         return DataTables::of($data)
             ->addColumn('name', function($row) {
                 return $row->user->name ?? 'N/A';
