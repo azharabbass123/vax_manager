@@ -6,7 +6,7 @@ $(document).ready(function(){
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            method: 'post',
+            method: 'get',
             data: { date: date }
         }).done(function(hws){
             $('#hw_id').empty();

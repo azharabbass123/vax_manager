@@ -2,31 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Appointment\CreateAppointmentRequest;
+use App\Http\Requests\Appointment\UpdateAppointmentRequest;
+use App\Models\User;
+use App\Models\Patient;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ApointmentController extends Controller
 {
     public function create()
     {
-        return View('appointment.index');
+        $userName = Auth::user()->name;
+        $userId = Auth::user()->id;
+        return View('appointment.index', ['userName' => $userName, 'userId' => $userId]);
     }
 
-    public function store(Request $request)
+    public function store(CreateAppointmentRequest $request)
     {
-      
-        $attributes = $request->validate([
-            'patient_id' => ['required'],
-            'hw_id' => ['required'],
-            'apt_Date' => ['required'],
-            'apt_Status' => ['required']
-        ]);
-      $patientId = User::select('patients.id')
-          ->join('patients', 'users.id', '=', 'patients.user_id')
-          ->where('users.id', '=', $request->patient_id)
-          ->get();
+
+        $attributes = $request->validated();
+        $patientId = Patient::select('id')
+            ->where('user_id', $request->patient_id)
+            ->get();
         Appointment::create([
             'patient_id' => $patientId['0']->id,
             'hw_id' => $request->hw_id,
@@ -40,21 +40,19 @@ class ApointmentController extends Controller
     public function edit($id)
     {
         $aptData = Appointment::find($id);
-        return view('appointment.edit', ['aptData' => $aptData]);
+        $userName = Auth::user()->name;
+        $userId = Auth::user()->id;
+        return view('appointment.edit', ['aptData' => $aptData, 'userName' => $userName, 'userId' => $userId]);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateAppointmentRequest $request, $id)
     {
-        $request->validate([
-            'apt_Status' => ['required'],
-        ]);
+        $request->validated();
         $appointment = Appointment::find($id);
 
         $appointment->apt_Status = $request->apt_Status;
 
         $appointment->save();
         return redirect('/health_worker')->with('status', 'Data updated Successfully');
-
-
     }
 }

@@ -14,9 +14,9 @@
         @method('patch')
         <div class="row">
           <div class="col-md-4 form-group mt-3">
-            <input type="hidden" name="patient_id" value="{{Auth::user()->id}}">
+            <input type="hidden" name="patient_id" value="{{$userId}}">
             <label for="name">Health Worekr:</label>
-            <input class="form-control" type="text" name="name" id="name" value="{{Auth::user()->name}}" disabled>
+            <input class="form-control" type="text" name="name" id="name" value="{{$userName}}" disabled>
           </div>
         </div>
         <div class="row">

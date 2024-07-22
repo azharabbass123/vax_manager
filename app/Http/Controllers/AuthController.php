@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\User\AuthUserRequest;
 use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
-class SessionController extends Controller
+class AuthController extends Controller
 {
     public function create()
     {
@@ -15,13 +16,9 @@ class SessionController extends Controller
         return view('auth.login', ['roles' => $roles]);
     }
 
-    public function store(Request $request)
+    public function store(AuthUserRequest $request)
     {
-        $attributes = $request->validate([
-            'email' => ['required', 'email'],
-            'password' => ['required'],
-            'role_id' => ['required']
-        ]);
+        $attributes = $request->validated();
 
         if (!Auth::attempt($attributes)) {
             throw ValidationException::withMessages([
@@ -44,7 +41,7 @@ class SessionController extends Controller
             1 => '/admin',
             2 => '/health_worker',
             3 => '/patient',
-            default => '/login' // Default redirection if role_id is unexpected
+            default => '/login'
         };
 
         return redirect()->intended($redirectRoute);

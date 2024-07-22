@@ -103,8 +103,7 @@ $(document).ready(function() {
                 { data: 'province_name', name: 'province_name' },
                 { data: 'vax_date', name: 'vax_date' },
                 { data: 'vax_status', name: 'vax_status' },
-                { data: 'action', name: 'action', orderable: false, searchable: false },
-            ],
+                ],
             columnDefs: [
                 {
                     targets: 0,

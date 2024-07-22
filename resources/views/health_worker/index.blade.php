@@ -73,7 +73,6 @@
                     <th class="bg-primary text-white text-center">Province</th>
                     <th class="bg-primary text-white text-center">Vax date</th>
                     <th class="bg-primary text-white text-center">Vax Status</th>
-                    <th class="bg-primary text-white text-center">Action</th>
                   </tr>
                 </thead>
               </table>

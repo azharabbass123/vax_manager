@@ -2,14 +2,15 @@
 
 // routes/web.php
 
-use App\Http\Controllers\SessionController;
-use App\Http\Controllers\RegisterUserController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\HealthWorkerController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ApointmentController;
 use App\Http\Controllers\VaccinationController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HealthWorkerController;
+use App\Http\Controllers\RegisterUserController;
 
 // Home and Registration Routes (Guest accessible)
 Route::get('/', function () {
@@ -18,12 +19,12 @@ Route::get('/', function () {
 
 Route::get('/register', [RegisterUserController::class, 'create']);
 Route::post('/register', [RegisterUserController::class, 'store']);
-Route::post('/fetch-cities', [RegisterUserController::class, 'fetchCities'])->name('fetch-cities');
+Route::post('/fetch-cities', [DataController::class, 'fetchCities'])->name('fetch-cities');
 Route::get('/edit/{id}', [RegisterUserController::class, 'edit']);
 Route::patch('/update/{id}', [RegisterUserController::class, 'update']);
 // Session Routes (Guest accessible)
-Route::get('/session', [SessionController::class, 'create'])->name('session');
-Route::post('/session', [SessionController::class, 'store']);
+Route::get('/session', [AuthController::class, 'create'])->name('session');
+Route::post('/session', [AuthController::class, 'store']);
 
 // Admin Routes (Admin middleware)
 Route::middleware('checkrole:1')->group(function () {
@@ -50,7 +51,7 @@ Route::middleware('checkrole:2')->group(function () {
     Route::get('/editAppointment/{id}', [ApointmentController::class, 'edit']);
     Route::patch('/updateAppointment/{id}', [ApointmentController::class, 'update']);
     Route::get('/vaccination', [VaccinationController::class, 'create']);
-    Route::post('/vaccination', [VaccinationController::class, 'store'])->name('vaccination');
+    Route::post('/vaccination', [VaccinationController::class, 'store']);
 });
 
 // Patient Routes (Patient middleware)
@@ -60,6 +61,6 @@ Route::middleware('checkrole:3')->group(function () {
     Route::get('/fetch-patient-vax', [PatientController::class, 'fetchVaccinations'])->name('fetch-patient-vax');
     Route::get('/appointment', [ApointmentController::class, 'create']);
     Route::post('/appointment', [ApointmentController::class, 'store']);
-    Route::post('/fetch-avaialble-hw', [RegisterUserController::class, 'fetchHw'])->name('fetch-avaialble-hw');
+    Route::get('/fetch-avaialble-hw', [DataController::class, 'fetchHw'])->name('fetch-avaialble-hw');
 });
-Route::delete('/session', [SessionController::class, 'destroy']);
+Route::delete('/session', [AuthController::class, 'destroy']);

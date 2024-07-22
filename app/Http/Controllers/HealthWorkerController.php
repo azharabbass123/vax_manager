@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Patient;
+use App\Helpers\UserHelper;
 use App\Models\Appointment;
 use App\Models\Vaccination;
 use App\Models\HealthWorker;
@@ -77,7 +78,6 @@ class HealthWorkerController extends Controller
             })
             ->make(true);
     }
-
     public function trackPatients()
     {
         $hw_province = User::with(['city.province'])
@@ -86,41 +86,6 @@ class HealthWorkerController extends Controller
 
         $hw_prv_id = $hw_province->city->province->id;
 
-        return HealthWorkerController::fetchPatients($hw_prv_id);
-    }
-
-    private function fetchPatients($province_id)
-    {
-        $trackedPatients = Patient::with(['user.city.province', 'vaccinations']) // Eager load relationships
-            ->whereHas('user.city.province', function ($query) use ($province_id) {
-                $query->where('id', $province_id);
-            })
-            ->get();
-
-        return DataTables::of($trackedPatients)
-            ->addColumn('patient_name', function ($row) {
-                return $row->user->name ?? 'N/A';
-            })
-            ->addColumn('patient_email', function ($row) {
-                return $row->user->email ?? 'N/A';
-            })
-            ->addColumn('city_name', function ($row) {
-                return $row->user->city->name ?? 'N/A';
-            })
-            ->addColumn('province_name', function ($row) {
-                return $row->user->city->province->name ?? 'N/A';
-            })
-            ->addColumn('vax_date', function ($row) {
-                return $row->vaccinations['0']->vax_Date ?? 'NA';
-            })
-            ->addColumn('vax_status', function ($row) {
-                return $row->vaccinations['0']->vax_Status ?? 'NA';
-            })
-            ->addColumn('action', function ($row) {
-                $btn = '<button type="button" onclick="deletePatient(' . $row->id . ')" class="btn btn-sm btn-danger">Delete</button>';
-                return $btn;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+        return UserHelper::fetchPatients($hw_prv_id);
     }
 }

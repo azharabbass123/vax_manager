@@ -15,7 +15,7 @@
         <div class="row">
           <div class="col-md-4 form-group mt-3">
             <label for="name">Health Worker Name</label>
-            <input class="form-control" type="text" name="name" id="name" value="{{Auth::user()->name}}" disabled>
+            <input class="form-control" type="text" name="name" id="name" value="{{$userName}}" disabled>
           </div>
         </div>
         <div class="row">
